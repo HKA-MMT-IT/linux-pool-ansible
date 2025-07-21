@@ -1,0 +1,80 @@
+- name: Install realmd
+      apt:
+        name: realmd
+        state: present
+        update_cache: yes
+
+- name: Install sssd
+      apt:
+        name: sssd
+        state: present
+        update_cache: yes
+
+- name: Install sssd-tools
+      apt:
+        name: sssd-tools
+        state: present
+        update_cache: yes
+
+- name: Install libnss-sss
+      apt:
+        name: libnss-sss
+        state: present
+        update_cache: yes
+
+- name: Install libpam-sss
+      apt:
+        name: libpam-sss
+        state: present
+        update_cache: yes
+
+- name: Install adcli
+      apt:
+        name: adcli
+        state: present
+        update_cache: yes
+
+- name: Install samba-common-bin
+      apt:
+        name: samba-common-bin
+        state: present
+        update_cache: yes
+
+- name: Install oddjob
+      apt:
+        name: oddjob
+        state: present
+        update_cache: yes
+
+- name: Install oddjob-mkhomedir
+      apt:
+        name: oddjob-mkhomedir
+        state: present
+        update_cache: yes
+
+- name: Install packagekit
+      apt:
+        name: oddjob
+        state: present
+        update_cache: yes
+
+- name: join in Active Directory domain
+      shell: realm join --computer-ou '$OU' -U $ADMIN_USER ADS.HS-KARLSRUHE.DE
+
+- name: create Home Dir automatically when initial login
+  ansible.builtin.lineinfile:
+    path: /etc/pam.d/common-session
+    regexp: '^session optional pam_mkhomedir.so'
+    line: session optional pam_mkhomedir.so skel=/etc/skel umask=077
+
+- name: login without domaine name
+  ansible.builtin.lineinfile:
+    path: /etc/sssd/sssd.conf
+    regexp: '^use_fully_qualified_names'
+    line: use_fully_qualified_names = False
+
+- name: 
+  ansible.builtin.lineinfile:
+    path: /etc/sssd/sssd.conf
+    regexp: '^access_provider'
+    line: access_provider = simple
