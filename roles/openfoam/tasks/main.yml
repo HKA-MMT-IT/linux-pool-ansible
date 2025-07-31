@@ -1,0 +1,8 @@
+- name: Install paraview
+  import_tasks: ../../paraview/tasks/main.yml
+
+- name: Install openfoam
+  apt:
+    name: openfoam
+    state: present
+    update_cache: yes

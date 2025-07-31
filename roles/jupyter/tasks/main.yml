@@ -1,0 +1,5 @@
+- name: Install jupyter
+  apt:
+    name: jupyter
+    state: present
+    update_cache: yes

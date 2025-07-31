@@ -1,0 +1,23 @@
+- name: install active directory login
+  hosts: li148
+  become: true
+  tasks:
+    - name: change network user on login
+      copy:
+        dest: /usr/share/libpam-script/pam_script_ses_open
+        mode: '755'
+        content: |
+          #!/bin/bash
+
+          echo "$PAM_SERVICE $PAM_USER $USER" >> /home/log.txt
+          if [ "$PAM_SERVICE" == "gdm-password" ]
+          then
+            adduser $PAM_USER netdev
+            nmcli connection down p0
+            nmcli connection down p1
+            nmcli --terse connection show | cut -d : -f 1 | while read name; do nmcli connection delete "$name"; done
+            nmcli connection add con-name "p0" type "Ethernet" ifname "eno1"
+            nmcli connection up p0
+            nmcli connection add con-name "p1" type "802-3-ethernet" ifname "eno1" autoconnect "yes" 802-1x.optional "no" 802-1x.eap "peap" 802-1x.anonymous-identity "anonymous@h-ka.de" 802-1x.domain-suffix-match "h-ka.de" 802-1x.identity "$PAM_USER@mmt-p1.h-ka.de" 802-1x.phase2-auth "mschapv2" 802-1x.phase1-peapver "0"
+            nmcli connection up p1 --ask
+          fi

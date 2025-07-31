@@ -1,0 +1,18 @@
+- name: install active directory login
+  hosts: li148
+  become: true
+  vars:
+    jonas:
+      user: hajo0004
+      pass: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          31356365363336366662343134363633313861346561316334323335643762303962633866613964
+          3433393061386435353865313733303365376537363035300a383036666237333864626239663539
+          65643639343235363464383961633332363239656163386265626364323139333538386430623463
+          3963383333313261360a633861646365313934373636393462653934316538393630343964306534
+          3938
+  tasks:
+    - name: create connection
+      command: nmcli connection add con-name "admin" type "802-3-ethernet" ifname "eno1" autoconnect "yes" 802-1x.optional "no" 802-1x.eap "peap" 802-1x.anonymous-identity "anonymous@h-ka.de" 802-1x.domain-suffix-match "h-ka.de" 802-1x.identity "{{ jonas.user }}@mmt-p1.h-ka.de" 802-1x.phase2-auth "mschapv2" 802-1x.phase1-peapver "0" 802-1x.password "{{ jonas.pass }}"
+    - name: connect to new network
+      command: nmcli connection up admin

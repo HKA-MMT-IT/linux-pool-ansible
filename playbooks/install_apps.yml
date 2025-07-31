@@ -1,0 +1,61 @@
+- name: install all apps for pool
+  hosts: li148
+  become: true
+  tasks:
+    - name: Install python
+      apt:
+        name: python3
+        state: present
+        update_cache: yes
+
+    - name: Install numpy
+      apt:
+        name: python3-numpy
+        state: present
+        update_cache: yes
+
+    - name: Install matplotlib
+      apt:
+        name: python3-matplotlib
+        state: present
+        update_cache: yes
+
+    - name: Install opencv
+      apt:
+        name: python3-opencv
+        state: present
+        update_cache: yes
+
+    - name: Install pip
+      apt:
+        name: python3-pip
+        state: present
+        update_cache: yes
+
+    - name: Install jupyter
+      apt:
+        name: jupyter
+        state: present
+        update_cache: yes
+
+    - name: Install paraview
+      apt:
+        name: paraview
+        state: present
+        update_cache: yes
+
+    - name: Install openfoam
+      apt:
+        name: openfoam
+        state: present
+        update_cache: yes
+
+    - name: Install pycharm
+      community.general.snap:
+        name: pycharm-community
+        classic: true
+
+    - name: Install FreeCAD
+      community.general.snap:
+        name: freecad
+

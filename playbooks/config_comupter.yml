@@ -1,0 +1,33 @@
+- name: config computer for other tasks
+  hosts: li148
+  become: true
+  tasks:
+    - name: Install auto apt proxy
+      apt:
+        name: auto-apt-proxy
+        state: present
+        update_cache: yes
+
+    - name: Install unattended-upgrades
+      apt:
+        name: unattended-upgrades
+        state: present
+        update_cache: yes
+
+    - name: set ssh pubkey auth
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PubkeyAuthentication'
+        line: PubkeyAuthentication yes
+
+    - name: set ssh pubkey auth
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PasswordAuthentication'
+        line: PasswordAuthentication no
+
+    - name: set ssh pubkey auth
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PermitRootLogin'
+        line: PermitRootLogin yes

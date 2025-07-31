@@ -1,0 +1,123 @@
+- name: install active directory login
+  hosts: li148
+  become: true
+  vars:
+    jonas:
+      user: hajo0004
+      pass: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          31356365363336366662343134363633313861346561316334323335643762303962633866613964
+          3433393061386435353865313733303365376537363035300a383036666237333864626239663539
+          65643639343235363464383961633332363239656163386265626364323139333538386430623463
+          3963383333313261360a633861646365313934373636393462653934316538393630343964306534
+          3938
+  tasks:
+    - name: Install realmd
+      apt:
+        name: realmd
+        state: present
+        update_cache: yes
+
+    - name: Install sssd
+      apt:
+        name: sssd
+        state: present
+        update_cache: yes
+
+    - name: Install sssd-tools
+      apt:
+        name: sssd-tools
+        state: present
+        update_cache: yes
+
+    - name: Install libnss-sss
+      apt:
+        name: libnss-sss
+        state: present
+        update_cache: yes
+
+    - name: Install libpam-sss
+      apt:
+        name: libpam-sss
+        state: present
+        update_cache: yes
+
+    - name: Install libpam-script
+      apt:
+        name: libpam-script
+        state: present
+        update_cache: yes
+
+    - name: Install adcli
+      apt:
+        name: adcli
+        state: present
+        update_cache: yes
+
+    - name: Install samba-common-bin
+      apt:
+        name: samba-common-bin
+        state: present
+        update_cache: yes
+
+    - name: Install oddjob
+      apt:
+        name: oddjob
+        state: present
+        update_cache: yes
+
+    - name: Install oddjob-mkhomedir
+      apt:
+        name: oddjob-mkhomedir
+        state: present
+        update_cache: yes
+
+    - name: Install packagekit
+      apt:
+        name: oddjob
+        state: present
+        update_cache: yes
+
+    - name: Install network manager
+      apt:
+        name: network-manager-gnome
+        state: present
+        update_cache: yes
+
+    - name: check already in AD
+      command: realm list
+      register: realms
+
+    - name: print stdout
+      debug:
+        var: realms.stdout
+
+    - name: join in Active Directory domain
+      command: realm join --computer-ou 'OU=MMT-POOL-LI148-U,OU=Tier_4,OU=Clients,OU=MMT,OU=HS' -U {{ jonas.user }} ADS.HS-KARLSRUHE.DE
+      args:
+        stdin: "{{ jonas.pass }}"
+      when: realms.stdout == ""
+
+    - name: create Home Dir automatically when initial login
+      ansible.builtin.lineinfile:
+        path: /etc/pam.d/common-session
+        regexp: '^session optional pam_mkhomedir.so'
+        line: session optional pam_mkhomedir.so skel=/etc/skel umask=077
+
+    - name: login without domaine name
+      ansible.builtin.lineinfile:
+        path: /etc/sssd/sssd.conf
+        regexp: '^use_fully_qualified_names'
+        line: use_fully_qualified_names = False
+
+    - name: 
+      ansible.builtin.lineinfile:
+        path: /etc/sssd/sssd.conf
+        regexp: '^access_provider'
+        line: access_provider = simple
+
+    - name:
+      ansible.builtin.lineinfile:
+        path: /etc/gdm3/greeter.dconf-defaults
+        regexp: '^# disable-user-list'
+        line: disable-user-list=true

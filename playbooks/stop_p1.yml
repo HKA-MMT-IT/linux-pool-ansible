@@ -1,0 +1,6 @@
+- name: install active directory login
+  hosts: li148
+  become: true
+  tasks:
+    - name: remove new network
+      command: nmcli connection delete admin

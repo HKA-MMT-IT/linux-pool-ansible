@@ -1,0 +1,22 @@
+autoinstall:
+  version: 1
+  interactive-sections:
+    - identity
+  identity:
+    hostname: MMT-LI148-00-U
+    username: mmt
+  locale: "de_DE.utf8"
+  keyboard:
+    layout: de
+  ssh:
+    install-server: true
+    authorized-keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBtKI4W0t2N57LUXE0umXyFkDXAeHG4imVRE6jqPDaa0 root@test1-ESPRIMO-P920
+    allow-pw: false
+  codecs:
+    install: true
+  drivers:
+    install: true
+  timezone: "Europe/Berlin"
+  updates: all
+  shutdown: reboot

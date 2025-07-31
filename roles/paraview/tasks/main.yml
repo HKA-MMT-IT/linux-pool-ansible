@@ -1,0 +1,5 @@
+- name: Install paraview
+  apt:
+    name: paraview
+    state: present
+    update_cache: yes

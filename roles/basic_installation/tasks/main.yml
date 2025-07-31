@@ -1,0 +1,154 @@
+- name: Install auto apt proxy
+  apt:
+    name: auto-apt-proxy
+    state: present
+    update_cache: yes
+
+- name: Install unattended-upgrades
+  apt:
+    name: unattended-upgrades
+    state: present
+    update_cache: yes
+
+- name: set ssh pubkey auth
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PubkeyAuthentication'
+    line: PubkeyAuthentication yes
+
+- name: set ssh pubkey auth
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PasswordAuthentication'
+    line: PasswordAuthentication no
+
+- name: set ssh pubkey auth
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PermitRootLogin'
+    line: PermitRootLogin yes
+
+- name: Install realmd
+  apt:
+    name: realmd
+    state: present
+    update_cache: yes
+
+- name: Install sssd
+  apt:
+    name: sssd
+    state: present
+    update_cache: yes
+
+- name: Install sssd-tools
+  apt:
+    name: sssd-tools
+    state: present
+    update_cache: yes
+
+- name: Install libnss-sss
+  apt:
+    name: libnss-sss
+    state: present
+    update_cache: yes
+
+- name: Install libpam-sss
+  apt:
+    name: libpam-sss
+    state: present
+    update_cache: yes
+
+- name: Install libpam-script
+  apt:
+    name: libpam-script
+    state: present
+    update_cache: yes
+
+- name: Install adcli
+  apt:
+    name: adcli
+    state: present
+    update_cache: yes
+
+- name: Install samba-common-bin
+  apt:
+    name: samba-common-bin
+    state: present
+    update_cache: yes
+
+- name: Install oddjob
+  apt:
+    name: oddjob
+    state: present
+    update_cache: yes
+
+- name: Install oddjob-mkhomedir
+  apt:
+    name: oddjob-mkhomedir
+    state: present
+    update_cache: yes
+
+- name: Install packagekit
+  apt:
+    name: oddjob
+    state: present
+    update_cache: yes
+
+- name: Install network manager
+  apt:
+    name: network-manager-gnome
+    state: present
+    update_cache: yes
+
+- name: check already in AD
+  command: realm list
+  register: realms
+
+- name: print stdout
+  debug:
+    var: realms.stdout
+
+- name: join in Active Directory domain
+  command: realm join --computer-ou 'OU=MMT-POOL-LI148-U,OU=Tier_4,OU=Clients,OU=MMT,OU=HS' -U {{ jonas.user }} ADS.HS-KARLSRUHE.DE
+  args:
+    stdin: "{{ jonas.pass }}"
+  when: realms.stdout == ""
+
+- name: create Home Dir automatically when initial login
+  ansible.builtin.lineinfile:
+    path: /etc/pam.d/common-session
+    regexp: '^session optional pam_mkhomedir.so'
+    line: session optional pam_mkhomedir.so skel=/etc/skel umask=077
+
+- name: login without domaine name
+  ansible.builtin.lineinfile:
+    path: /etc/sssd/sssd.conf
+    regexp: '^use_fully_qualified_names'
+    line: use_fully_qualified_names = False
+
+- name:
+  ansible.builtin.lineinfile:
+    path: /etc/gdm3/greeter.dconf-defaults
+    regexp: '^# disable-user-list'
+    line: disable-user-list=true
+
+- name: change network user on login
+  copy:
+    dest: /usr/share/libpam-script/pam_script_ses_open
+    mode: '755'
+    content: |
+      #!/bin/bash
+
+      echo "$PAM_SERVICE $PAM_USER $USER" >> /home/log.txt
+      if [ "$PAM_SERVICE" == "gdm-password" ]
+      then
+        adduser $PAM_USER netdev
+        nmcli connection down p0
+        nmcli connection down p1
+        nmcli --terse connection show | cut -d : -f 1 | while read name; do nmcli connection delete "$name"; done
+        nmcli connection add con-name "p0" type "Ethernet" ifname "eno1"
+        nmcli connection up p0
+        nmcli connection add con-name "p1" type "802-3-ethernet" ifname "eno1" autoconnect "yes" 802-1x.optional "no" 802-1x.eap "peap" 802-1x.anonymous-identity "anonymous@h-ka.de" 802-1x.domain-suffix-match "h-ka.de" 802-1x.identity "$PAM_USER@mmt-p1.h-ka.de" 802-1x.phase2-auth "mschapv2" 802-1x.phase1-peapver "0"
+        nmcli connection up p1 --ask
+      fi
+
