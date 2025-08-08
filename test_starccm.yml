@@ -1,0 +1,5 @@
+- name: Install Pool Li148
+  hosts: li148-02
+  become: true
+  roles:
+    - role: starccm
