@@ -1,7 +1,8 @@
 - name: Install Pool Li148
-  hosts: li148
+  hosts: li148-01
   become: true
   vars:
+    net: p
     jonas:
       user: hajo0004
       pass: !vault |
@@ -20,3 +21,4 @@
     - role: openfoam
     - role: pycharm
     - role: freecad
+    - role: starccm

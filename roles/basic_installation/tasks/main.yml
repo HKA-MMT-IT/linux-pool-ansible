@@ -126,6 +126,12 @@
     regexp: '^use_fully_qualified_names'
     line: use_fully_qualified_names = False
 
+- name: change access provider
+  ansible.builtin.lineinfile:
+    path: /etc/sssd/sssd.conf
+    regexp: '^access_provider'
+    line: access_provider = simple
+
 - name:
   ansible.builtin.lineinfile:
     path: /etc/gdm3/greeter.dconf-defaults
@@ -139,16 +145,26 @@
     content: |
       #!/bin/bash
 
-      echo "$PAM_SERVICE $PAM_USER $USER" >> /home/log.txt
       if [ "$PAM_SERVICE" == "gdm-password" ]
       then
         adduser $PAM_USER netdev
-        nmcli connection down p0
-        nmcli connection down p1
+        nmcli connection down {{ net }}0
+        nmcli connection down {{ net }}1
         nmcli --terse connection show | cut -d : -f 1 | while read name; do nmcli connection delete "$name"; done
-        nmcli connection add con-name "p0" type "Ethernet" ifname "eno1"
-        nmcli connection up p0
-        nmcli connection add con-name "p1" type "802-3-ethernet" ifname "eno1" autoconnect "yes" 802-1x.optional "no" 802-1x.eap "peap" 802-1x.anonymous-identity "anonymous@h-ka.de" 802-1x.domain-suffix-match "h-ka.de" 802-1x.identity "$PAM_USER@mmt-p1.h-ka.de" 802-1x.phase2-auth "mschapv2" 802-1x.phase1-peapver "0"
-        nmcli connection up p1 --ask
+        nmcli connection add con-name "{{ net }}0" type "Ethernet" ifname "eno1"
+        nmcli connection up {{ net }}0
+        nmcli connection add con-name "{{ net }}1" type "802-3-ethernet" ifname "eno1" autoconnect "yes" 802-1x.optional "no" 802-1x.eap "peap" 802-1x.anonymous-identity "anonymous@h-ka.de" 802-1x.domain-suffix-match "h-ka.de" 802-1x.identity "$PAM_USER@mmt-{{ net }}1.h-ka.de" 802-1x.phase2-auth "mschapv2" 802-1x.phase1-peapver "0"
+        nmcli connection up {{ net }}1
       fi
 
+- name: change password for mmt user
+  user:
+    name: mmt
+    update_password: always
+    password: $6$/uiHoaQQNbY.DhQm$.rCNwq8Lv6Y83bl/j3Q/ic5DElZevv/LIFje/LfbY4hvjQ.rt3Iz8vOV4uho3FgpkTCZk9fLdbPiE95mGz5iq.
+
+- name: remove root password
+  user:
+    name: root
+    update_password: always
+    password: '!'
