@@ -1,3 +1,0 @@
-- name: Install cura slicer
-  community.general.snap:
-    name: cura-slicer

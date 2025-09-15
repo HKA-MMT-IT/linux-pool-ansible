@@ -1,18 +1,27 @@
+- name: check installed version
+  command: /opt/Siemens/20.04.007-R8/STAR-CCM+20.04.007-R8/star/bin/./starccm+ --version
+  register: result
+  ignore_errors: true
+
 - name: copy install files
   copy:
     src: ../files/starccm/siemens.tar.gz
     dest: /tmp/siemens.tar.gz
+  when: result.stdout.find("Simcenter STAR-CCM+ 2506 Build 20.04.007") == -1
 
 - name: unzip
   command: tar -xvzf /tmp/siemens.tar.gz -C /opt
- 
+  when: result.stdout.find("Simcenter STAR-CCM+ 2506 Build 20.04.007") == -1
+
 - name: add to PATH in bash.bashrc
   ansible.builtin.lineinfile:
     path: /etc/bash.bashrc
     regexp: '^export PATH="$PATH:/opt/Siemens/20.04.007-R8/STAR-CCM+20.04.007-R8/star/bin/:/opt/Siemens/20.04.007-R8/STAR-View+20.04.007/bin/"'
     line: export PATH="$PATH:/opt/Siemens/20.04.007-R8/STAR-CCM+20.04.007-R8/star/bin/:/opt/Siemens/20.04.007-R8/STAR-View+20.04.007/bin/"
+  when: result.stdout.find("Simcenter STAR-CCM+ 2506 Build 20.04.007") == -1
 
 - name: remove install files
   file:
     path: /tmp/siemens.tar.gz
     state: absent
+  when: result.stdout.find("Simcenter STAR-CCM+ 2506 Build 20.04.007") == -1

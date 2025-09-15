@@ -1,8 +1,8 @@
 - name: Install f204
-  hosts: f204-01
+  hosts: f204
   become: true
   vars:
-    net: w
+    net: p
     jonas:
       user: hajo0004
       pass: !vault |
@@ -14,4 +14,11 @@
           3938
   roles:
     - role: basic_installation
-    - role: reboot
+    - role: pycharm
+    - role: vs_code
+    - role: cura_slicer
+    - role: prusa_slicer
+    - role: freecad
+    - role: arduino
+    - role: kicad
+    - role: ansys

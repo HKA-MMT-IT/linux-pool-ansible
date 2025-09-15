@@ -3,7 +3,7 @@
 
 - name: Install opencv
   apt:
-    name: python3-opencv
+    name: libopencv-dev
     state: present
     update_cache: yes
 

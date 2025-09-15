@@ -1,5 +1,5 @@
 - name: Install Pool Li148
-  hosts: li148-01
+  hosts: li148_01
   become: true
   vars:
     net: p
@@ -16,9 +16,20 @@
     - role: basic_installation
     - role: python
     - role: jupyter
+    - role: opencv_python
+    - role: build_essentials
     - role: opencv
     - role: paraview
     - role: openfoam
     - role: pycharm
     - role: freecad
     - role: starccm
+    - role: ansys
+    - role: vlc
+    - role: xournal
+    - role: octave
+    - role: vs_code
+    - role: cmake
+    - role: meld
+    - role: latex
+    - role: kdenlive

@@ -1,5 +1,5 @@
 - name: Install f203
-  hosts: f203-01
+  hosts: f203_01
   become: true
   vars:
     net: w
@@ -13,7 +13,12 @@
           3963383333313261360a633861646365313934373636393462653934316538393630343964306534
           3938
   roles:
-    - role: basic_installation
-    - role: cura-slicer
-    - role: prusa-slicer
-    - role: reboot
+    #    - role: basic_installation
+    - role: pycharm
+    - role: vs_code
+    - role: cura_slicer
+    - role: prusa_slicer
+    - role: freecad
+    - role: arduino
+    - role: kicad
+    - role: ansys

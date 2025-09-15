@@ -4,6 +4,11 @@
     state: present
     update_cache: yes
 
+- name: upgrade all packages
+  apt:
+    update_cache: yes
+    upgrade: full
+
 - name: Install unattended-upgrades
   apt:
     name: unattended-upgrades
@@ -109,7 +114,7 @@
     var: realms.stdout
 
 - name: join in Active Directory domain
-  command: realm join --computer-ou 'OU=MMT-POOL-LI148-U,OU=Tier_4,OU=Clients,OU=MMT,OU=HS' -U {{ jonas.user }} ADS.HS-KARLSRUHE.DE
+  command: realm join --computer-ou 'OU=MMT-NEUE-RECHNER,OU=Tier_4,OU=Clients,OU=MMT,OU=HS' -U {{ jonas.user }} ADS.HS-KARLSRUHE.DE
   args:
     stdin: "{{ jonas.pass }}"
   when: realms.stdout == ""
@@ -168,3 +173,37 @@
     name: root
     update_password: always
     password: '!'
+
+- name: remove welcome screen
+  apt:
+    name: gnome-initial-setup
+    state: absent
+    autoremove: yes
+
+- name: activate wake on LAN - install ethtool
+  apt:
+    name: ethtool
+    state: present
+    update_cache: yes
+
+- name: activate wake on LAN - create service
+  copy:
+    dest: /etc/systemd/system/wol.service
+    mode: '755'
+    content: |
+      [Unit]
+      Description=Config Wake-up on LAN
+      After=network-online.target
+
+      [Service]
+      Type=oneshot
+      ExecStart=/sbin/ethtool -s eno1 wol g
+
+      [Install]
+      WantedBy=basic.target
+
+- name: activate wake on LAN - enable service
+  command: systemctl enable wol.service
+
+- name: reboot system
+  reboot:
