@@ -1,0 +1,6 @@
+- name: Install libre office
+  apt:
+    name: libreoffice
+    state: present
+    update_cache: yes
+

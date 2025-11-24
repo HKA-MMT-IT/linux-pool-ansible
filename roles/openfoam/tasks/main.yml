@@ -6,3 +6,25 @@
     name: openfoam
     state: present
     update_cache: yes
+
+      #- name: Add the 'nginx.org' repository
+      #  ansible.builtin.deb822_repository:
+      #    name: openfoam stable
+      #    types: deb
+      #    uris: http://dl.openfoam.org/ubuntu
+      #    suites: "{{ ansible_distribution_release | lower }}"
+      #    components:
+      #      - openfoam13
+      #    architectures: amd64
+      #    signed_by: https://dl.openfoam.org/gpg.key
+      #    enabled: true
+
+      #- name: Update the package index database
+      #  ansible.builtin.apt:
+      #    update_cache: true
+
+      #- name: Install openfoam
+      #  apt:
+      #    name: openfoam13
+      #    state: present
+      #    update_cache: yes

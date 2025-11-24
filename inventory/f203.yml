@@ -1,0 +1,20 @@
+f203:
+  vars:
+    install_pycharm: true
+    install_vs_code: true
+    install_cura_slicer: true
+    install_prusa_slicer: true
+    install_freecad: true
+    install_arduino: true
+    install_kicad: true
+    install_ansys: true
+    install_libre_office: true
+    install_latex: true
+    install_kdenlive: true
+    install_bambu_studio: true
+
+  hosts:
+    MMT-F203-01-U-W1:
+      net: w
+      interface: eno1
+      mac: a08cfdc539ce

@@ -1,0 +1,6 @@
+- name: Install meld
+  apt:
+    name: meld
+    state: present
+    update_cache: yes
+

@@ -1,0 +1,3 @@
+- name: Install kicad
+  community.general.snap:
+    name: kicad

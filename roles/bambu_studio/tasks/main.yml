@@ -1,0 +1,28 @@
+- name: check bambu studio already installed
+  stat:
+    path: /usr/bambu_studio
+  register: result
+  ignore_errors: true
+
+- name: create folder
+  command: mkdir /usr/bambu_studio
+  when: not result.stat.exists
+
+- name: copy appimage
+  copy:
+    src: ../files/bambu_studio/Bambu_Studio_ubuntu-24.04_PR-8834.AppImage
+    dest: /usr/bambu_studio/Bambu_Studio_ubuntu-24.04_PR-8834.AppImage
+    mode: '0755'
+  when: not result.stat.exists
+
+- name: copy icon
+  copy:
+    src: ../files/bambu_studio/bambu_studio.png
+    dest: /usr/bambu_studio/
+  when: not result.stat.exists
+
+- name: copy menu entry
+  copy:
+    src: ../files/bambu_studio/bambu_studio.desktop
+    dest: /usr/share/applications/
+  when: not result.stat.exists

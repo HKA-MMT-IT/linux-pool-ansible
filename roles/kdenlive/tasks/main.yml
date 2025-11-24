@@ -1,0 +1,6 @@
+- name: Install kdenlive
+  apt:
+    name: kdenlive
+    state: present
+    update_cache: yes
+

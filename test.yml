@@ -1,0 +1,21 @@
+- hosts: li148
+  gather_facts: true
+  vars:
+    - hosts: hostvars[host]
+  tasks:
+    - name: print mac
+      ping:
+
+- hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Write results to local output file
+      copy:
+        dest: "./output/macs.json"
+        content: |
+          {% for host in groups.li148 %}
+          === {{ host }} ==
+
+          {{hostvars[host]}}
+
+          {% endfor %}

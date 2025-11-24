@@ -1,0 +1,4 @@
+- name: Install VS Code
+  community.general.snap:
+    name: code
+    classic: true

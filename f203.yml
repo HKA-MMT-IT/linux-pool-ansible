@@ -1,8 +1,10 @@
 - name: Install f203
   hosts: f203_01
   become: true
+  ignore_unreachable: true
   vars:
     net: w
+    interface: eno1
     jonas:
       user: hajo0004
       pass: !vault |
@@ -13,7 +15,8 @@
           3963383333313261360a633861646365313934373636393462653934316538393630343964306534
           3938
   roles:
-    #    - role: basic_installation
+    - role: connect
+    - role: basic_installation
     - role: pycharm
     - role: vs_code
     - role: cura_slicer
@@ -22,3 +25,8 @@
     - role: arduino
     - role: kicad
     - role: ansys
+    - role: libre_office
+    - role: latex
+    - role: kdenlive
+    - role: disconnect
+    - role: reboot

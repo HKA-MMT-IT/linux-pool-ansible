@@ -1,0 +1,10 @@
+- name: create connections
+  command: |
+    nmcli connection add con-name "{{ net }}1-ansible" type "802-3-ethernet" ifname "{{ interface }}" autoconnect "yes" 802-1x.optional "no" 802-1x.eap "peap" 802-1x.anonymous-identity "anonymous@h-ka.de" 802-1x.domain-suffix-match "h-ka.de" 802-1x.identity "{{ jonas.user }}@mmt-{{ net }}1.h-ka.de" 802-1x.phase2-auth "mschapv2" 802-1x.phase1-peapver "0" 802-1x.optional "yes"
+
+- name: set password
+  command: nmcli connection modify {{ net }}1-ansible 802-1x.password "{{ jonas.pass }}"
+
+- name: connect
+  command: nmcli connection up "{{ net }}1-ansible"
+  poll: 0

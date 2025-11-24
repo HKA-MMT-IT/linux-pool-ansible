@@ -1,9 +1,8 @@
-- name: Install f204
-  hosts: f204
+- name: Install Pool Li148
+  hosts: li148_01
   become: true
   vars:
     net: p
-    interface: eno1
     jonas:
       user: hajo0004
       pass: !vault |
@@ -14,14 +13,4 @@
           3963383333313261360a633861646365313934373636393462653934316538393630343964306534
           3938
   roles:
-    - role: connect
-    - role: basic_installation
-    - role: pycharm
-    - role: vs_code
-    - role: cura_slicer
-    - role: prusa_slicer
-    - role: freecad
-    - role: arduino
-    - role: kicad
-    - role: ansys
-    - role: disconnect
+    - role: get_mac

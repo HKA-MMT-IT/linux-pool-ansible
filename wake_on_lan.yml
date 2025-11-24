@@ -1,0 +1,6 @@
+- name: Wake up pool
+  hosts: MMT-F203-01-U-W1
+  ignore_unreachable: true
+  become: true
+  roles:
+    - role: wake_on_lan

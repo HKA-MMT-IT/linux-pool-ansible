@@ -156,9 +156,10 @@
         nmcli connection down {{ net }}0
         nmcli connection down {{ net }}1
         nmcli --terse connection show | cut -d : -f 1 | while read name; do nmcli connection delete "$name"; done
-        nmcli connection add con-name "{{ net }}0" type "Ethernet" ifname "eno1"
+        nmcli connection add con-name "{{ net }}0" type "Ethernet" ifname "{{ interface }}"
         nmcli connection up {{ net }}0
-        nmcli connection add con-name "{{ net }}1" type "802-3-ethernet" ifname "eno1" autoconnect "yes" 802-1x.optional "no" 802-1x.eap "peap" 802-1x.anonymous-identity "anonymous@h-ka.de" 802-1x.domain-suffix-match "h-ka.de" 802-1x.identity "$PAM_USER@mmt-{{ net }}1.h-ka.de" 802-1x.phase2-auth "mschapv2" 802-1x.phase1-peapver "0"
+        nmcli connection add con-name "{{ net }}1" type "802-3-ethernet" ifname "{{ interface }}" autoconnect "yes" 802-1x.optional "no" 802-1x.eap "peap" 802-1x.anonymous-identity "anonymous@h-ka.de" 802-1x.domain-suffix-match "h-ka.de" 802-1x.identity "$PAM_USER@mmt-{{ net }}1.h-ka.de" 802-1x.phase2-auth "mschapv2" 802-1x.phase1-peapver "0" 802-1x.optional "yes"
+        nmcli connection add con-name "disconnect {{ net }}1" type "802-3-ethernet" ifname "{{ interface }}" autoconnect "yes" 802-1x.optional "no" 802-1x.eap "peap" 802-1x.anonymous-identity "anonymous@h-ka.de" 802-1x.domain-suffix-match "h-ka.de" 802-1x.identity "$PAM_USER@mmt-{{ net }}1.h-ka.de" 802-1x.phase2-auth "mschapv2" 802-1x.phase1-peapver "0" 802-1x.password "abc" 802-1x.optional "yes"
         nmcli connection up {{ net }}1
       fi
 
@@ -197,7 +198,7 @@
 
       [Service]
       Type=oneshot
-      ExecStart=/sbin/ethtool -s eno1 wol g
+      ExecStart=/sbin/ethtool -s {{ interface }} wol g
 
       [Install]
       WantedBy=basic.target
@@ -205,5 +206,5 @@
 - name: activate wake on LAN - enable service
   command: systemctl enable wol.service
 
-- name: reboot system
-  reboot:
+    #- name: reboot system
+    #  reboot:

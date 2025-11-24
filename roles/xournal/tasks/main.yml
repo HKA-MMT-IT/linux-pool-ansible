@@ -1,0 +1,6 @@
+- name: Install xournalpp
+  apt:
+    name: xournalpp
+    state: present
+    update_cache: yes
+

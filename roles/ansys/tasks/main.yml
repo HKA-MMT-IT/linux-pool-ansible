@@ -1,0 +1,74 @@
+- name: check uninstall v251
+  stat:
+    path: /usr/ansys_inc/v251
+  register: result
+  ignore_errors: true
+
+- name: remove v251
+  file:
+    path: /usr/ansys_inc/v251
+    state: absent
+  when: result.stat.exists
+
+- name: check installed version
+  stat:
+    path: /usr/ansys_inc/v252
+  register: result
+  ignore_errors: true
+
+- name: Install prerequirements
+  become: yes
+  package:
+    name:
+      - libjpeg62
+      - libnsl2 
+      - libxcb-xinerama0
+
+- name: copy install files
+  copy:
+    src: ../files/ansys/STRUCTURES_2025R2_LINX64.tgz
+    dest: /tmp/ansys.tgz
+  when: not result.stat.exists
+
+- name: copy install files
+  copy:
+    src: ../files/ansys/Structures.txt
+    dest: /tmp/Structures.txt
+  when: not result.stat.exists
+
+- name: create folder
+  command: mkdir /tmp/ansys
+  when: not result.stat.exists
+
+
+- name: unzip
+  command: tar -xvzf /tmp/ansys.tgz -C /tmp/ansys
+  when: not result.stat.exists
+
+- name: install ansys
+  command: /tmp/ansys/./INSTALL -productfile /tmp/Structures.txt -licserverinfo 2325:1055:mmt-docker-01 -silent
+  when: not result.stat.exists
+
+- name: copy icon
+  copy:
+    src: ../files/ansys/workbench.png
+    dest: /usr/ansys_inc/v252/
+  when: not result.stat.exists
+
+- name: copy menu entry
+  copy:
+    src: ../files/ansys/ansys.desktop
+    dest: /usr/share/applications/
+  when: not result.stat.exists
+
+- name: remove install files
+  file:
+    path: /tmp/ansys.tgz
+    state: absent
+  when: not result.stat.exists
+
+- name: remove install files
+  file:
+    path: /tmp/ansys
+    state: absent
+  when: not result.stat.exists

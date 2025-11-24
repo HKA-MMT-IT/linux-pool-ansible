@@ -1,0 +1,12 @@
+- name: Install cmake
+  apt:
+    name: cmake
+    state: present
+    update_cache: yes
+
+- name: Install cmake-gui
+  apt:
+    name: cmake-curses-gui
+    state: present
+    update_cache: yes
+

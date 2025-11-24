@@ -1,0 +1,25 @@
+- name: Install python
+  apt:
+    name: docker.io
+    state: present
+    update_cache: yes
+
+- name: Install python
+  apt:
+    name: docker-compose-v2
+    state: present
+    update_cache: yes
+
+- name: add all users on login to docker group
+  ansible.builtin.lineinfile:
+    path: /usr/share/libpam-script/pam_script_ses_open
+    regexp: '^gpasswd -a $USER docker'
+    insertbefore: '^fi'
+    line: '  gpasswd -a $PAM_USER docker'
+
+- name: add all users on login to docker group
+  ansible.builtin.lineinfile:
+    path: /usr/share/libpam-script/pam_script_ses_open
+    regexp: '^newgrp docker'
+    insertbefore: '^fi'
+    line: '  newgrp docker'

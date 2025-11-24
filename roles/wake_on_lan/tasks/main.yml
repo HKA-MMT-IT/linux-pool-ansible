@@ -1,0 +1,36 @@
+- name: loop send wol packet
+  vars:
+    max_attempts: 10
+  block:
+    - name: increment attempts counter
+      ansible.builtin.set_fact:
+        attempt_number: "{{ attempt_number | d(0) | int + 1 }}"
+    - name: Send a magic Wake-on-LAN packet
+      community.general.wakeonlan:
+        mac: '{{mac}}'
+        broadcast: '{{inventory_hostname}}'
+      delegate_to: localhost
+
+    - name: Wait for connection
+      ansible.builtin.wait_for_connection:
+        delay: 1
+        timeout: 10
+
+  rescue:
+    - name: "Fail if we reached the max of {{ max_attempts | d(10) }} attempts"
+      # Default will be 3 attempts if max_attempts is not passed as a parameter
+      ansible.builtin.fail:
+        msg: Maximum number of attempts reached
+      when: attempt_number | int == max_attempts | int | d(10)
+
+    - ansible.builtin.debug:
+        msg: "group of tasks failed on attempt {{ attempt_number }}. Retrying"
+
+    - name: add delay if needed
+      # no delay if retry_delay is not passed as parameter
+      ansible.builtin.wait_for:
+        timeout: "{{ retry_delay | int | d(omit) }}"
+      when: retry_delay is defined
+
+    # include ourselves to retry.
+    - ansible.builtin.include_tasks: main.yml

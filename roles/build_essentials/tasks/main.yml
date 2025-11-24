@@ -1,0 +1,9 @@
+- name: install python
+  import_tasks: ../../python/tasks/main.yml
+
+- name: Install build-essential
+  apt:
+    name: build-essential
+    state: present
+    update_cache: yes
+

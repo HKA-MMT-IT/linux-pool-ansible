@@ -1,0 +1,13 @@
+- name: Install texlive
+  apt:
+    name: texlive-full
+    state: present
+    update_cache: yes
+
+- name: Install texmaker
+  apt:
+    name: texmaker
+    state: present
+    update_cache: yes
+
+

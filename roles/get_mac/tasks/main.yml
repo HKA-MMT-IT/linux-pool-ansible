@@ -1,0 +1,6 @@
+- name: log mac address
+  lineinfile:
+    line: "{{ hostvars[inventory_hostname].ansible_default_ipv4 }},"
+    insertafter: EOF
+    dest: mac.txt
+  delegate_to: 127.0.0.1

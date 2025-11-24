@@ -1,5 +1,5 @@
-- name: Install Pool Li148
-  hosts: li148
+- name: Install Lab LI-015
+  hosts: li015_01
   become: true
   ignore_unreachable: true
   vars:
@@ -16,18 +16,18 @@
           3938
   roles:
     #- role: wake_on_lan
-    #- role: connect
+    - role: connect
     - role: basic_installation
     - role: python
     - role: jupyter
     - role: opencv_python
     - role: build_essentials
     - role: opencv
-    - role: paraview
-    - role: openfoam
+      #    - role: paraview
+      #    - role: openfoam
     - role: pycharm
-    - role: freecad
-    - role: starccm
+      #    - role: freecad
+      #    - role: starccm
     - role: ansys
     - role: vlc
     - role: xournal
@@ -35,8 +35,8 @@
     - role: vs_code
     - role: cmake
     - role: meld
-    - role: latex
+      #    - role: latex
     - role: kdenlive
     - role: libre_office
     - role: disconnect
-      #- role: reboot
+    - role: reboot

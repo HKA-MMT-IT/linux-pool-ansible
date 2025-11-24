@@ -1,10 +1,9 @@
-- name: Install Pool Li148
-  hosts: li148
+- name: Install Pool Li147
+  hosts: li147
   become: true
-  ignore_unreachable: true
   vars:
     net: p
-    interface: eno1
+    interface: enp0s31f6
     jonas:
       user: hajo0004
       pass: !vault |
@@ -15,8 +14,7 @@
           3963383333313261360a633861646365313934373636393462653934316538393630343964306534
           3938
   roles:
-    #- role: wake_on_lan
-    #- role: connect
+    - role: connect
     - role: basic_installation
     - role: python
     - role: jupyter
@@ -39,4 +37,3 @@
     - role: kdenlive
     - role: libre_office
     - role: disconnect
-      #- role: reboot

@@ -1,0 +1,6 @@
+- name: set password to abc
+  command: nmcli connection modify {{ net }}1-ansible 802-1x.password "abc"
+
+- name: disconnect
+  command: nmcli connection up "{{ net }}1-ansible"
+  poll: 0

@@ -1,0 +1,9 @@
+- name: install python
+  import_tasks: ../../python/tasks/main.yml
+
+- name: Install opencv
+  apt:
+    name: python3-opencv
+    state: present
+    update_cache: yes
+

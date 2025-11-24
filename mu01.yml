@@ -1,10 +1,8 @@
-- name: Install Pool Li148
-  hosts: li148
+- name: Install Pool M-U01
+  hosts: mu01
   become: true
-  ignore_unreachable: true
   vars:
     net: p
-    interface: eno1
     jonas:
       user: hajo0004
       pass: !vault |
@@ -15,28 +13,10 @@
           3963383333313261360a633861646365313934373636393462653934316538393630343964306534
           3938
   roles:
-    #- role: wake_on_lan
-    #- role: connect
     - role: basic_installation
     - role: python
     - role: jupyter
-    - role: opencv_python
     - role: build_essentials
-    - role: opencv
-    - role: paraview
-    - role: openfoam
     - role: pycharm
-    - role: freecad
-    - role: starccm
-    - role: ansys
-    - role: vlc
-    - role: xournal
-    - role: octave
     - role: vs_code
-    - role: cmake
-    - role: meld
-    - role: latex
-    - role: kdenlive
-    - role: libre_office
-    - role: disconnect
-      #- role: reboot
+    - role: docker
